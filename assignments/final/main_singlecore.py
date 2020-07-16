@@ -28,7 +28,7 @@ for folder in folders:
 # ==================================================================================
 # Enter variant details here:
 
-SIMULATION_GOOGLE_SHEET_ID = '1MT0t6LtNF5uuQKNFWRTdmhPKE7nVBSTP-E8HfqdzrMU'
+SIMULATION_GOOGLE_SHEET_ID = '<enter GoogleDoc ID here>'
 SIMULATION_VARIANTS_SHEET = 'variants!A1:G100'
 
 
@@ -95,7 +95,7 @@ def add_tasks(variants):
         for d in data_sheets:
             # Load the variant candy fro the Google sheet
             # The "False" will force candy sheets to be reloaded every time to replace cache
-            if False and os.path.exists(f'datasets/cache/{d}.csv'):
+            if True and os.path.exists(f'datasets/cache/{d}.csv'):
                 v_data[d] = pd.read_csv(f'datasets/cache/{d}.csv')
                 v_data[d] = v_data[d].applymap(convert_numbers)
                 
@@ -154,7 +154,7 @@ if __name__ == "__main__":
     # ----
     # Load the variant candy fro the Google sheet
     # Note: The "False" forces us to always reload the variants tab and overwrite cache
-    if False and os.path.isfile('datasets/cache/data_variants.csv'):
+    if True and os.path.isfile('datasets/cache/data_variants.csv'):
         variant_df = pd.read_csv('datasets/cache/data_variants.csv')
         variant_df = variant_df.applymap(convert_numbers)
     else:

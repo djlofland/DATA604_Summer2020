@@ -23,7 +23,7 @@ from SimEngine.UtilityFunctions import *
 # ==================================================================================
 # Enter variant details here:
 
-SIMULATION_GOOGLE_SHEET_ID = '16U3BSAZFElWEqjf4HL0YzlscroQhvw_zaZcJfcYXOMg'
+SIMULATION_GOOGLE_SHEET_ID = '<Insert GoogleSheet ID here>'
 SIMULATION_VARIANTS_SHEET = 'variants!A1:G100'
 
 
@@ -44,35 +44,42 @@ def worker(task_queue):
         game.init_game(v_data)
         
         log_to_file(f'Simulation Start: ({run_number} | {v_id} | {v_data["sim_count"]} | {v_data["sim_length"]})', end='\n')
-        
+
+        # Create a game
+        game = Game()
+        game.init_game(v_data)
+
         # initialize virtual player
         player = Player()
         player.init_player(player_id=run_number,
                            variant=v_id,
                            v_data=v_data,
                            game=game)
-        
+
         game.set_player(player)
         game.start_sim(int(v_data['sim_length']) * int(v_data['sim_fps']))
         flush_log()
-        
+
         # Save player simulation csv candy to folder
-        df = game.snapshot.results_df
-        df.fillna(0, inplace=True)
-        df = df.applymap(convert_numbers)
-        
-        # Reorder Adviser Columns to End of DataFrame
-        cols = df.columns
-        cols_minus_adv = [df_col for df_col in cols if 'Adviser' not in df_col]
-        cols_adviser = [df_col for df_col in cols if 'Adviser' in df_col]
-        cols = cols_minus_adv + cols_adviser
-        df = df[cols]
-        
-        df.to_csv(f'datasets/batch/{v_id}_{run_number}.csv', index=False)
-        
+        results_df = game.snapshot.results_df
+        results_df.fillna(0, inplace=True)
+        results_df = results_df.applymap(convert_numbers)
+
+        # Reorder Animal and Candy Columns to End of DataFrame
+        cols = results_df.columns
+        candy_cols = sorted([c_col for c_col in cols if c_col[:2] == 'c_'], key=lambda x: int(x[2:]))
+        animal_cols = sorted([a_col for a_col in cols if a_col[:2] == 'a_'], key=lambda x: int(x[2:]))
+        cols_c_a = candy_cols + animal_cols
+        other_cols = [o_col for o_col in cols if o_col not in cols_c_a]
+
+        cols = other_cols + cols_c_a
+        results_df = results_df[cols]
+
+        results_df.to_csv(f'datasets/batch/{v_id}_{run_number}.csv', index=False)
+
         log_to_file(f'Simulation End: ({run_number} | {v_id} | {v_data["sim_count"]} | {v_data["sim_length"]})')
         flush_log()
-        
+
         del game, player, run_number, v_id, v_data
     
     return True
@@ -96,7 +103,7 @@ def add_tasks(task_queue, variants):
         for d in data_sheets:
             # Load the variant candy fro the Google sheet
             # The "False" will force candy sheets to be reloaded every time to replace cache
-            if False and os.path.exists(f'datasets/cache/{d}.csv'):
+            if True and os.path.exists(f'datasets/cache/{d}.csv'):
                 v_data[d] = pd.read_csv(f'datasets/cache/{d}.csv')
                 v_data[d] = v_data[d].applymap(convert_numbers)
             else:
@@ -155,7 +162,7 @@ def load_data(file, sheet_range):
 if __name__ == "__main__":
     # ----
     # Load the variant candy fro the Google sheet
-    if False and os.path.isfile('datasets/cache/data_variants.csv'):
+    if True and os.path.isfile('datasets/cache/data_variants.csv'):
         variant_df = pd.read_csv('datasets/cache/data_variants.csv')
         variant_df = variant_df.applymap(convert_numbers)
     else:
