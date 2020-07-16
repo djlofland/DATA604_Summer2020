@@ -1,0 +1,16 @@
+Egg_ID,Egg_Name,Rarity_1,Rarity_2,Rarity_3,Rarity_4,Rarity_5
+1,Rarity_1_1,1,,,,
+2,Rarity_1_2,1,1,,,
+3,Rarity_1_3,1,1,1,,
+4,Rarity_1_4,1,1,1,1,
+5,Rarity_1_5,1,1,1,1,1.0
+6,Rarity_2_2,,1,,,
+7,Rarity_2_3,,1,1,,
+8,Rarity_2_4,,1,1,1,
+9,Rarity_2_5,,1,1,1,1.0
+10,Rarity_3_3,,,1,,
+11,Rarity_3_4,,,1,1,
+12,Rarity_3_5,,,1,1,1.0
+13,Rarity_4_4,,,,1,
+14,Rarity_4_5,,,,1,1.0
+15,Rarity_5_5,,,,,1.0
